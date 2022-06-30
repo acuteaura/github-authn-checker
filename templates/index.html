@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Authentication Tester</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link rel="stylesheet" href="https://fonts.bunny.net/css?family=Inter">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+    <style>
+        body {
+            font-family: 'Inter', serif;
+        }
+
+        .top {
+            margin-top: 2em;
+        }
+
+        .state-forbidden {
+            color: #dc3545;
+        }
+
+        .state-ok {
+            color: #28a745;
+        }
+
+        .state-unknown {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="top">Authentication Tester</h1>
+    <p>This page can show you which organizations are included when using a standard GitHub OAuth flow with
+        <code>org:read</code> scope.</p>
+    <p>GitHub has a problem with not considering SAML sessions when including organizations in token scope, rendering
+        SAML useless for
+        many GitHub SSO use cases. You can read more about it <a
+                href="https://notes.acuteaura.net/posts/github-enterprise-security/">here</a>.</p>
+    <p></p>
+    {% if login %}
+    <p>Logged in as <strong>{{ login }}</strong>.</p>
+    <p><a href="/logout" class="button">Revoke GitHub grant</a></p>
+    {% if orgs %}
+    <table>
+        <tr>
+            <th>Organization Name</th>
+            <th>Membership API Request Result</th>
+        </tr>
+        {% for org in orgs %}
+        <tr>
+            <td>{{org.login}}</td>
+            <td class="state-{{org_membership_ok[org.login]}}">{{org_membership_ok[org.login]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    {% else %}
+    <p><a href="/oauth" class="button">Sign in with GitHub</a></p>
+    <p>Ensure you grant organization access if you want to test if an organization-allowed app would convey
+        authentication without SAML session.</p>
+    {% endif %}
+</div>
+</body>
+</html>
